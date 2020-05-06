@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <link rel="stylesheet" type="text/css"
+          th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.min.css}"/>
+    <title>Character Information</title>
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed"
+                    data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+                    aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span> <span
+                    class="icon-bar"></span> <span class="icon-bar"></span> <span
+                    class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#" th:href="@{/}">Home Page</a>
+        </div>
+    </div>
+</nav>
+
+<br>
+<br>
+
+<div class="container">
+    <div class="jumbotron">
+        <h1 th:text="'Hello, ' + ${characterDetailsDto.name}"/>
+        <p class="lead" th:text="'Age: ' + ${characterDetailsDto.age}"/>
+        <p class="lead" th:text="'Race: ' + ${characterDetailsDto.raceName}"/>
+        <p class="lead" th:text="'Class: ' + ${characterDetailsDto.className}"/>
+        <!--        <hr class="my-4">-->
+        <!--        <p>Check your free equipments and spells below</p>-->
+    </div>
+    <div class="row mb-2">
+        <div class="col-md-6">
+            <h1 th:unless="${#lists.isEmpty(characterDetailsDto.startingEquipment.startingEquipmentDtos)}">Starting
+                Equipments</h1>
+            <table class="table"
+                   th:unless="${#lists.isEmpty(characterDetailsDto.startingEquipment.startingEquipmentDtos)}">
+                <thead>
+                <tr>
+                    <th>Equipment</th>
+                    <th>Quantity</th>
+                </tr>
+                </thead>
+                <tr th:each="equipment : ${characterDetailsDto.startingEquipment.startingEquipmentDtos}">
+                    <td th:text="${equipment.item.name}"></td>
+                    <td th:text="${equipment.quantity}">1</td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-md-6">
+            <h1 th:unless="${#lists.isEmpty(characterDetailsDto.spells.results)}">Spells</h1>
+            <table class="table" th:unless="${#lists.isEmpty(characterDetailsDto.spells.results)}">
+                <thead>
+                <tr>
+                    <th>Spell</th>
+                </tr>
+                </thead>
+                <tr th:each="spell : ${characterDetailsDto.spells.results}">
+                    <td th:text="${spell.name}"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript"
+        th:src="@{/webjars/jquery/3.2.1/jquery.min.js/}"></script>
+<script type="text/javascript"
+        th:src="@{/webjars/bootstrap/3.3.7/js/bootstrap.min.js}"></script>
+</body>
+</html>
