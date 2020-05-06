@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.util.Locale;
+
 @Slf4j
 @ControllerAdvice
 public class AppExceptionHandler extends ResponseEntityExceptionHandler {
@@ -22,21 +24,6 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
     private String errorMessageKey = "error.general.message";
     private String errorMessage = "";
 
-//    @Override
-//    protected ResponseEntity<Object> handleMethodArgumentNotValid(
-//            MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-//        errorMessage = getGeneralErrorMessage("error.general.bad.request");
-//        ErrorMessageDTO errorMessageDTO = ErrorMessageDTO.builder()
-//                .setStatus(HttpStatus.BAD_REQUEST.value())
-//                .setMessageKey(errorMessageKey)
-//                .setMessage(errorMessage)
-//                .setServiceUri(request.getDescription(false))
-//                .setException(ex.getClass().getSimpleName());
-//        log.error("Error: " + errorMessage + " Exception: " + ex.getClass().getSimpleName() + ". Reference Number:" + errorMessageDTO.getErrorReference() + ". Response code: "
-//                + HttpStatus.BAD_REQUEST.value());
-//        return handleExceptionInternal(ex, errorMessageDTO, headers, status, request);
-//    }
-
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity<Object> handleAny(Exception ex, WebRequest request) {
         errorMessage = getGeneralErrorMessage(errorMessageKey);
@@ -46,8 +33,6 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
                 .setMessage(errorMessage)
                 .setServiceUri(request.getDescription(false))
                 .setException(ex.getClass().getSimpleName());
-//        log.error("Error: " + errorMessage + " Exception: " + ex.getClass().getSimpleName() + ". Reference Number:" + errorMessageDTO.getErrorReference() + ". Response code: "
-//                + HttpStatus.INTERNAL_SERVER_ERROR.value());
         log.error("Error: {} Exception: {}. Reference Number: {}. Response code: {} ",
                 errorMessage,
                 ex.getClass().getSimpleName(),
@@ -63,7 +48,7 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     private String getGeneralErrorMessage(String messageKey) {
-        return messageSource.getMessage(messageKey, null, null);
+        return messageSource.getMessage(messageKey, null, Locale.ENGLISH);
     }
 
     private String getExceptionName(Exception ex) {

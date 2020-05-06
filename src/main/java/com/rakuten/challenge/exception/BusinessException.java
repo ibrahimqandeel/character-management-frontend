@@ -12,6 +12,10 @@ public class BusinessException extends Exception {
     public BusinessException() {
     }
 
+    public BusinessException(int httpStatus) {
+        this.httpStatus = httpStatus;
+    }
+
     public BusinessException(String messageKey, String message, int httpStatus) {
         this.messageKey = messageKey;
         this.message = message;

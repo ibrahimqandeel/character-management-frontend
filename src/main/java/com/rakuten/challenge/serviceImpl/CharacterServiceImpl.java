@@ -15,7 +15,7 @@ import java.util.Optional;
 @Slf4j
 @Service
 public class CharacterServiceImpl implements CharacterService {
-    private CharacterAPIClient characterAPIClient;
+    private final CharacterAPIClient characterAPIClient;
 
     public CharacterServiceImpl(CharacterAPIClient characterAPIClient) {
         this.characterAPIClient = characterAPIClient;

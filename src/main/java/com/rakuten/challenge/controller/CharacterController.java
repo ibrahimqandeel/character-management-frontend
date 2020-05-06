@@ -2,16 +2,13 @@ package com.rakuten.challenge.controller;
 
 import com.rakuten.challenge.dto.*;
 import com.rakuten.challenge.exception.BadRequestException;
-import com.rakuten.challenge.exception.BusinessException;
+import com.rakuten.challenge.exception.InternalServerException;
 import com.rakuten.challenge.exception.ResourceDuplicationException;
 import com.rakuten.challenge.exception.ResourceNotFoundException;
 import com.rakuten.challenge.service.CharacterService;
 import com.rakuten.challenge.service.ClassService;
 import com.rakuten.challenge.service.RaceService;
-import com.rakuten.challenge.serviceImpl.CharacterServiceImpl;
-import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,7 +18,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
 import javax.annotation.PostConstruct;
 import javax.validation.Valid;
@@ -33,9 +29,9 @@ import java.util.Optional;
 @RequestMapping("/characters")
 public class CharacterController {
 
-    private CharacterService characterService;
-    private RaceService raceService;
-    private ClassService classService;
+    private final CharacterService characterService;
+    private final RaceService raceService;
+    private final ClassService classService;
 
     private List<RaceDto> allRaces;
     private List<ClassDto> allClasses;
@@ -56,38 +52,36 @@ public class CharacterController {
         this.classService = classService;
     }
 
-    private void loadAllRaces() throws ResourceNotFoundException {
-        try {
-            Optional<AllRacesDto> allRacesDto = raceService.getRaces();
-            allRaces = allRacesDto.get().getResults();
-        } catch (ResourceNotFoundException ex) {
-            log.error("Error: {} Exception: {}. Method name: {}. Response code: {} ",
-                    "Races Not Found",
-                    ex.getClass().getSimpleName(),
-                    "loadAllRaces",
-                    HttpStatus.NOT_FOUND.value());
-            throw ex;
-        }
-    }
-
-    private void loadAllClasses() throws ResourceNotFoundException {
-        try {
-            Optional<AllClassesDto> allClassesDto = classService.getClasses();
-            allClasses = allClassesDto.get().getResults();
-        } catch (ResourceNotFoundException ex) {
-            log.error("Error: {} Exception: {}. Reference Number: {}. Response code: {} ",
-                    "Classes Not Found",
-                    ex.getClass().getSimpleName(),
-                    "loadAllClasses",
-                    HttpStatus.NOT_FOUND.value());
-            throw ex;
-        }
-    }
-
     @PostConstruct
     private void init() throws ResourceNotFoundException {
         loadAllRaces();
         loadAllClasses();
+    }
+
+    private void loadAllRaces() {
+        try {
+            Optional<AllRacesDto> allRacesDto = raceService.getRaces();
+            allRacesDto.ifPresent(racesDto -> allRaces = racesDto.getResults());
+        } catch (ResourceNotFoundException | InternalServerException ex) {
+            log.error("Error: {} Exception: {}. Method name: {}. Response code: {} ",
+                    "Races Not Found",
+                    ex.getClass().getSimpleName(),
+                    "loadAllRaces",
+                    ex.getHttpStatus());
+        }
+    }
+
+    private void loadAllClasses() {
+        try {
+            Optional<AllClassesDto> allClassesDto = classService.getClasses();
+            allClassesDto.ifPresent(classesDto -> allClasses = classesDto.getResults());
+        } catch (ResourceNotFoundException | InternalServerException ex) {
+            log.error("Error: {} Exception: {}. Reference Number: {}. Response code: {} ",
+                    "Classes Not Found",
+                    ex.getClass().getSimpleName(),
+                    "loadAllClasses",
+                    ex.getHttpStatus());
+        }
     }
 
     @GetMapping(path = "/create-form")
@@ -110,9 +104,9 @@ public class CharacterController {
             modelAndView.setViewName("redirect:/?success");
             return modelAndView;
         } catch (ResourceDuplicationException e) {
-            result.rejectValue("name", null, "There is already a character with this name");
+            result.rejectValue("name", String.valueOf(HttpStatus.CONFLICT.value()), "There is already a character with this name");
         } catch (BadRequestException e) {
-            result.rejectValue("name", null, "Please make sure you entered valid data");
+            result.rejectValue("name", String.valueOf(HttpStatus.BAD_REQUEST.value()), "Please make sure you entered valid data");
         }
         return modelAndView;
     }
