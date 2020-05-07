@@ -47,10 +47,6 @@ To monitor and manage your application
 
 |  URL |  Method |
 |----------|--------------|
-|`http://localhost:8080`  						| GET |
-|`http://localhost:8080/actuator/`             | GET |
-|`http://localhost:8080/actuator/health`    	| GET |
-|`http://localhost:8080/actuator/info`      	| GET |
-|`http://localhost:8080/actuator/prometheus`| GET |
-|`http://localhost:8080/actuator/httptrace` | GET |
+|`https://character-management-frontend.herokuapp.com/actuator/health`    	| GET |
+|`https://character-management-frontend.herokuapp.com/actuator/info`      	| GET |
 
