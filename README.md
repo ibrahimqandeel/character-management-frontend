@@ -24,6 +24,9 @@ Character management frontend application
 
 ## Running the application locally
 
+This project is depending on character-managment project as a backend, so it's mandatory to deploy character-managment at first.
+follow deployment steps here https://github.com/ibrahimqandeel/character-management/blob/master/README.md
+
 There are several ways to run a Spring Boot application on your local machine. One way is to execute the `main` method in the `com.rakuten.challenge.CharacterManagementFrontendApplication` class from your IDE.
 
 - Download the zip or clone the Git repository.
