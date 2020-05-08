@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.PostConstruct;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
@@ -36,32 +35,19 @@ public class CharacterController {
     private List<RaceDto> allRaces;
     private List<ClassDto> allClasses;
 
-    @ModelAttribute("allRaces")
-    public List<RaceDto> allRaces() {
-        return allRaces;
-    }
-
-    @ModelAttribute("allClasses")
-    public List<ClassDto> allClasses() {
-        return allClasses;
-    }
-
     public CharacterController(CharacterService characterService, RaceService raceService, ClassService classService) {
         this.characterService = characterService;
         this.raceService = raceService;
         this.classService = classService;
     }
 
-    @PostConstruct
-    private void init() throws ResourceNotFoundException {
-        loadAllRaces();
-        loadAllClasses();
-    }
 
-    private void loadAllRaces() {
+    private List<RaceDto> loadAllRaces() {
         try {
-            Optional<AllRacesDto> allRacesDto = raceService.getRaces();
-            allRacesDto.ifPresent(racesDto -> allRaces = racesDto.getResults());
+            if (allRaces == null || allRaces.size() == 0) {
+                Optional<AllRacesDto> allRacesDto = raceService.getRaces();
+                allRacesDto.ifPresent(racesDto -> allRaces = racesDto.getResults());
+            }
         } catch (ResourceNotFoundException | InternalServerException ex) {
             log.error("Error: {} Exception: {}. Method name: {}. Response code: {} ",
                     "Races Not Found",
@@ -69,12 +55,16 @@ public class CharacterController {
                     "loadAllRaces",
                     ex.getHttpStatus());
         }
+
+        return allRaces;
     }
 
     private void loadAllClasses() {
         try {
-            Optional<AllClassesDto> allClassesDto = classService.getClasses();
-            allClassesDto.ifPresent(classesDto -> allClasses = classesDto.getResults());
+            if (allClasses == null || allClasses.size() == 0) {
+                Optional<AllClassesDto> allClassesDto = classService.getClasses();
+                allClassesDto.ifPresent(classesDto -> allClasses = classesDto.getResults());
+            }
         } catch (ResourceNotFoundException | InternalServerException ex) {
             log.error("Error: {} Exception: {}. Reference Number: {}. Response code: {} ",
                     "Classes Not Found",
@@ -85,9 +75,19 @@ public class CharacterController {
     }
 
     @GetMapping(path = "/create-form")
-    public String showCreateForm(Model model) {
-        model.addAttribute("newCharacterDto", new CharacterDto());
-        return "create";
+    public ModelAndView showCreateForm() {
+        ModelAndView modelAndView = new ModelAndView();
+        loadAllRaces();
+        loadAllClasses();
+        modelAndView.addObject("allRaces", allRaces);
+        modelAndView.addObject("allClasses", allClasses);
+        modelAndView.addObject("newCharacterDto", new CharacterDto());
+        modelAndView.setViewName("create");
+
+        if (allRaces == null || allRaces.size() == 0 || allClasses == null || allClasses.size() == 0) {
+            modelAndView.setViewName("redirect:/?lookupFailed");
+        }
+        return modelAndView;
     }
 
     @PostMapping

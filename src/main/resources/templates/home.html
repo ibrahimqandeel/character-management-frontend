@@ -40,6 +40,11 @@
                 </div>
             </div>
 
+            <div th:if="${param.lookupFailed}">
+                <div class="alert alert-danger">Unable to load form lookups. Make sure Races and Classes are available.
+                </div>
+            </div>
+
             <br/>
             <h1>Show your character profile </h1><br/>
             <form th:action="@{/characters}" th:object="${characterNameDto}" method="get">

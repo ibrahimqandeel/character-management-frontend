@@ -43,7 +43,7 @@ public class CharacterServiceImpl implements CharacterService {
         try {
             return characterAPIClient.viewCharacterInfo(name);
         } catch (FeignException feignException) {
-            if (feignException.status() == HttpStatus.NOT_FOUND.value()) {
+            if (feignException.status() == HttpStatus.NOT_FOUND.value() || feignException.status() == -1) {
                 throw new ResourceNotFoundException();
             } else {
                 log.error("Error: {} Exception: {}. Response code: {} ",
