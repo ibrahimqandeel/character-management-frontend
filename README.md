@@ -24,6 +24,9 @@ Character management frontend application
 
 ## Running the application locally
 
+This project is depending on character-managment project as a backend, so it's mandatory to deploy character-managment at first.
+follow deployment steps here https://github.com/ibrahimqandeel/character-management/blob/master/README.md
+
 There are several ways to run a Spring Boot application on your local machine. One way is to execute the `main` method in the `com.rakuten.challenge.CharacterManagementFrontendApplication` class from your IDE.
 
 - Download the zip or clone the Git repository.
@@ -47,10 +50,6 @@ To monitor and manage your application
 
 |  URL |  Method |
 |----------|--------------|
-|`http://localhost:8080`  						| GET |
-|`http://localhost:8080/actuator/`             | GET |
-|`http://localhost:8080/actuator/health`    	| GET |
-|`http://localhost:8080/actuator/info`      	| GET |
-|`http://localhost:8080/actuator/prometheus`| GET |
-|`http://localhost:8080/actuator/httptrace` | GET |
+|`https://character-management-frontend.herokuapp.com/actuator/health`    	| GET |
+|`https://character-management-frontend.herokuapp.com/actuator/info`      	| GET |
 
