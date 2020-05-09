@@ -70,7 +70,7 @@
                     <label for="raceIndex">Choose Race</label>
                     <select class="form-control selectpicker" th:field="*{raceIndex}" id="raceIndex">
                         <option value="">Nothing selected</option>
-                        <option th:each="record : ${allRaces}"
+                        <option th:each="record : ${races}"
                                 th:value="${record.index}"
                                 th:text="${record.name}">
                         </option>
@@ -83,7 +83,7 @@
                     <label for="classIndex">Choose Class</label>
                     <select class="form-control selectpicker" th:field="*{classIndex}" id="classIndex">
                         <option value="">Nothing selected</option>
-                        <option th:each="record : ${allClasses}"
+                        <option th:each="record : ${classes}"
                                 th:value="${record.index}"
                                 th:text="${record.name}">
                         </option>

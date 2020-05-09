@@ -42,6 +42,7 @@ public class CharacterController {
     }
 
 
+    @ModelAttribute("races")
     private List<RaceDto> loadAllRaces() {
         try {
             if (allRaces == null || allRaces.size() == 0) {
@@ -59,7 +60,8 @@ public class CharacterController {
         return allRaces;
     }
 
-    private void loadAllClasses() {
+    @ModelAttribute("classes")
+    private List<ClassDto> loadAllClasses() {
         try {
             if (allClasses == null || allClasses.size() == 0) {
                 Optional<AllClassesDto> allClassesDto = classService.getClasses();
@@ -72,6 +74,8 @@ public class CharacterController {
                     "loadAllClasses",
                     ex.getHttpStatus());
         }
+
+        return allClasses;
     }
 
     @GetMapping(path = "/create-form")
@@ -79,8 +83,8 @@ public class CharacterController {
         ModelAndView modelAndView = new ModelAndView();
         loadAllRaces();
         loadAllClasses();
-        modelAndView.addObject("allRaces", allRaces);
-        modelAndView.addObject("allClasses", allClasses);
+//        modelAndView.addObject("allRaces", allRaces);
+//        modelAndView.addObject("allClasses", allClasses);
         modelAndView.addObject("newCharacterDto", new CharacterDto());
         modelAndView.setViewName("create");
 
@@ -96,6 +100,8 @@ public class CharacterController {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("create");
         if (result.hasErrors()) {
+//            model.addAttribute("allRaces", allRaces);
+//            model.addAttribute("allClasses", allClasses);
             return modelAndView;
         }
 
@@ -105,8 +111,12 @@ public class CharacterController {
             return modelAndView;
         } catch (ResourceDuplicationException e) {
             result.rejectValue("name", String.valueOf(HttpStatus.CONFLICT.value()), "There is already a character with this name");
+//            modelAndView.addObject("allRaces", allRaces);
+//            modelAndView.addObject("allClasses", allClasses);
         } catch (BadRequestException e) {
             result.rejectValue("name", String.valueOf(HttpStatus.BAD_REQUEST.value()), "Please make sure you entered valid data");
+//            modelAndView.addObject("allRaces", allRaces);
+//            modelAndView.addObject("allClasses", allClasses);
         }
         return modelAndView;
     }

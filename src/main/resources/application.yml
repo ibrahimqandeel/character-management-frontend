@@ -1,0 +1,41 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: character-management-frontend
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 10000
+        readTimeout: 10000
+  hystrix:
+    enabled: false
+
+logging:
+  file:
+    name: character-management-frontend.log
+  level:
+    root: info
+
+character:
+  management:
+    base:
+      api:
+        uri: https://character-management.herokuapp.com/character-management
+    #        uri: http://localhost:8081/character-management
+    characters:
+      api:
+        name: CharactersAPI
+        uri: ${character.management.base.api.uri}/characters
+    classes:
+      api:
+        name: ClassesAPI
+        uri: ${character.management.base.api.uri}/classes
+    races:
+      api:
+        name: RacesAPI
+        uri: ${character.management.base.api.uri}/races
+
